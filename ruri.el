@@ -147,7 +147,8 @@
     (expand-file-name root-dir)))
 
 (defun ruri--get-vc-currect-git-branch ()
-  (car (vc-git-branches)))
+  (when (vc-root-dir)
+    (car (vc-git-branches))))
 
 (defun ruri--summary-project-name ()
   (when-let ((current-project-root (ruri--get-vc-root-dir)))
