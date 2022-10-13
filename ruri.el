@@ -114,7 +114,7 @@
   (intern (format ruri--segment--format key)))
 
 (defmacro define-ruri-segment (key &rest value)
-  "Define an ruri segment by specifing its name and body."
+  "Define a ruri segment by specifing its name and body."
   (declare (indent defun))
   `(defun ,(ruri--get-segment-name key) () ,@value))
 
