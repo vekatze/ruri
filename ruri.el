@@ -3,7 +3,7 @@
 ;; Author: vekatze <vekatze@icloud.com>
 ;; Created: 2021-12-10
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.1") (dash "2.14.1") (f "0.20.0") (lsp-mode "6.2.1") (yaml "0.2.0"))
+;; Package-Requires: ((emacs "26.1"))
 ;; URL: https://github.com/vekatze/ruri.el
 
 ;;; Commentary:
@@ -12,10 +12,7 @@
 
 ;;; Code:
 
-(require 'flycheck)
-(require 'lsp)
-(require 'magit)
-(require 'projectile)
+(require 'vc-git)
 
 ;;
 ;; global variables
@@ -145,37 +142,56 @@
 (define-ruri-segment size
   "%i")
 
-(defun ruri--project-info ()
-  (when-let ((branch (magit-get-current-branch))
-             (project-root-dir (directory-file-name (projectile-project-root)))
-             (project-root (file-name-base project-root-dir))
-             (file-path (buffer-file-name)))
-    (concat
-     (propertize
-      (concat
-       project-root
-       ruri-summary-separator
-       branch
-       ruri-summary-separator)
-      'face 'ruri-summary-prefix)
-     (propertize
-      (or (file-name-directory (file-relative-name file-path project-root-dir)) "")
-      'face 'ruri-summary-secondary))))
+(defun ruri--get-vc-root-dir ()
+  (when-let ((root-dir (vc-root-dir)))
+    (expand-file-name root-dir)))
 
-(defun ruri--get-summary-primary-name ()
-  (if-let ((file-path (buffer-file-name)))
-      (file-name-nondirectory file-path)
-    ruri-buffer-format))
+(defun ruri--get-vc-currect-git-branch ()
+  (car (vc-git-branches)))
+
+(defun ruri--summary-project-name ()
+  (when-let ((current-project-root (ruri--get-vc-root-dir)))
+    (propertize
+     (concat
+      (file-name-base (directory-file-name current-project-root))
+      ruri-summary-separator)
+     'face
+     'ruri-summary-prefix)))
+
+(defun ruri--summary-git-branch-name ()
+  (when-let ((current-git-branch (ruri--get-vc-currect-git-branch)))
+    (propertize
+     (concat
+      current-git-branch
+      ruri-summary-separator)
+     'face
+     'ruri-summary-prefix)))
+
+(defun ruri--summary-relative-path-from-project-root ()
+  (when-let ((project-root-dir (ruri--get-vc-root-dir))
+             (relative-path (file-name-directory (file-relative-name (buffer-file-name) project-root-dir))))
+    (propertize relative-path 'face 'ruri-summary-secondary)))
+
+(defun ruri--summary-primary-name ()
+  (propertize
+   (if-let ((file-name (buffer-file-name)))
+       (file-name-nondirectory file-name)
+     (buffer-name))
+   'face
+   'ruri-summary-body))
 
 (define-ruri-segment summary
-  (let ((primary (propertize (ruri--get-summary-primary-name) 'face 'ruri-summary-body)))
-    (concat (ruri--project-info) primary)))
+  (concat
+   (ruri--summary-project-name)
+   (ruri--summary-git-branch-name)
+   (ruri--summary-relative-path-from-project-root)
+   (ruri--summary-primary-name)))
 
 (define-ruri-segment major-mode
   (propertize (format-mode-line mode-name) 'face 'ruri-major-mode))
 
 (define-ruri-segment lsp
-  (when lsp--buffer-workspaces
+  (when (and (featurep 'lsp-mode) lsp--buffer-workspaces)
     (let ((text (mapconcat 'lsp--workspace-print lsp--buffer-workspaces ruri-lsp-separator)))
       (propertize text 'face 'ruri-lsp))))
 
@@ -209,11 +225,12 @@
       (propertize (format ruri-flycheck-format count) 'face face))))
 
 (define-ruri-segment flycheck
-  (when-let ((check-info-list (flycheck-count-errors flycheck-current-errors)))
-    (let ((info-text (ruri--flycheck-render-info 'ruri--flycheck-is-info check-info-list))
-          (warning-text (ruri--flycheck-render-info 'ruri--flycheck-is-warning check-info-list))
-          (error-text (ruri--flycheck-render-info 'ruri--flycheck-is-error check-info-list)))
-      (string-join (remove nil (list error-text warning-text info-text)) ruri-flycheck-separator))))
+  (when (featurep 'flycheck)
+    (when-let ((check-info-list (flycheck-count-errors flycheck-current-errors)))
+      (let ((info-text (ruri--flycheck-render-info 'ruri--flycheck-is-info check-info-list))
+            (warning-text (ruri--flycheck-render-info 'ruri--flycheck-is-warning check-info-list))
+            (error-text (ruri--flycheck-render-info 'ruri--flycheck-is-error check-info-list)))
+        (string-join (remove nil (list error-text warning-text info-text)) ruri-flycheck-separator)))))
 
 (provide 'ruri)
 
