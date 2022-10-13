@@ -1,0 +1,7 @@
+* Ruri Modeline for Emacs
+
+#+begin_quote
+瑠璃の地と人も見つべしわが床は涙の玉と敷きに敷ければ
+#+end_quote
+
+Ruri is a thin-layer over modeline.
