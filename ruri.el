@@ -127,6 +127,7 @@
 (defun ruri--render (segment-list)
   (string-join (remove nil (mapcar 'ruri--render-segment segment-list)) ruri-separator))
 
+;;;###autoload
 (defun ruri-install (segment-list)
   (let ((prefixed-segment-list (mapcar 'ruri--get-segment-name (cons 'empty segment-list))))
     (add-hook 'post-self-insert-hook 'force-mode-line-update)
