@@ -5,3 +5,9 @@
 #+end_quote
 
 Ruri is a thin-layer over modeline.
+
+[[/screenshot/low.png?raw=true]]
+
+[[/screenshot/mid.png?raw=true][some description]]
+
+[[/screenshot/high.png?raw=true]]
