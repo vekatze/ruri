@@ -13,13 +13,15 @@ Ruri is a thin-layer over modeline.
 ** Installation
 TBD
 
-| variable                   | description                                     |
-|----------------------------+-------------------------------------------------|
-| ruri-separator             | The separator that is inserted between segments |
-| ruri-mode-line-height-zoom | Specifies the heights of mode-lines             |
+Then configure the mode-line like this:
+
+#+begin_src emacs-lisp
+(ruri-install
+ '(modified size summary major-mode flycheck lsp encoding))
+#+end_src
 
 ** Defining Your Own Segemnt
-New segments can be defined using ~(define-new-segment NAME BODY)~. Here, ~NAME~ is the name of the newly-defined segment. ~BODY~ specifies the function that is executed every time when a mode-line is updated. More specifically, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
+New segments can be defined using ~(define-new-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; When this segment is used, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
 
 Defined segments can be added to the modeline using `ruri-install`.
 
@@ -28,18 +30,17 @@ Let's see a toy example. The following code defines a new segment ~my-great-segm
 #+begin_src emacs-lisp
 ;; shows current time using the face "error"
 (define-ruri-segment my-great-segment
-  (propertize
-   (current-time-string)
-   'face
-   'error))
+  (propertize (current-time-string) 'face 'error))
 
 (ruri-install
  '(modified size summary major-mode encoding my-great-segment))
 #+end_src
 
-which results in something like this:
+The code results in something like this:
 
 [[/screenshots/example.png?raw=true]]
+
+You can see that the resulting string of ~my-great-segment~ is concatenated to the resulting strings of the other segments. Those strings are concatenated using 2 spaces in our running example; This can be customized via ~ruri-separator~.
 
 You can also see that the time in the modeline is updated everytime when the mode-line is updated.
 
