@@ -74,32 +74,32 @@
 
 (defface ruri-major-mode
   '((t (:inherit font-lock-string-face)))
-  "Face for the major mode string in an ruri modeline."
+  "Face for the major mode string in the ruri mode-line."
   :group 'ruri)
 
 (defface ruri-lsp
   '((t (:inherit font-lock-constant-face)))
-  "Face for the LSP server string in an ruri modeline."
+  "Face for the LSP server string in the ruri mode-line."
   :group 'ruri)
 
 (defface ruri-encoding
   '((t (:inherit font-lock-keyword-face)))
-  "Face for the buffer encoding string in an ruri modeline."
+  "Face for the buffer encoding string in the ruri mode-line."
   :group 'ruri)
 
 (defface ruri-flycheck-error
-  '((t (:foreground "#ff8059")))
-  "Face for flycheck error feedback in the modeline."
+  '((t (:inherit 'flycheck-fringe-error)))
+  "Face for flycheck error feedback in the ruri mode-line."
   :group 'ruri)
 
 (defface ruri-flycheck-warning
-  '((t (:foreground "#d0bc00")))
-  "Face for flycheck warning feedback in the modeline."
+  '((t (:inherit 'flycheck-fringe-warning)))
+  "Face for flycheck warning feedback in the ruri mode-line."
   :group 'ruri)
 
 (defface ruri-flycheck-info
-  '((t (:foreground "#44bc44")))
-  "Face for flycheck info feedback in the modeline."
+  '((t (:inherit 'flycheck-fringe-info)))
+  "Face for flycheck info feedback in the ruri mode-line."
   :group 'ruri)
 
 ;;
