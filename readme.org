@@ -20,7 +20,7 @@ Then update the ~mode-line-format~ using the function ~ruri-install~:
  '(modified size summary major-mode flycheck lsp encoding))
 #+end_src
 
-By defaul,t segments are joined using 2 spaces; The separator can be customized via ~ruri-separator~.
+By default, segments are joined using 2 spaces; The separator can be customized via ~ruri-separator~.
 
 ** Defining Your Own Segments
 *** Example
