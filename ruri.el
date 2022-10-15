@@ -121,13 +121,13 @@
 
 (defun ruri--render (segment-list)
   "Render the list of segments SEGMENT-LIST."
-  (string-join (remove nil (mapcar 'ruri--render-segment segment-list)) ruri-separator))
+  (string-join (remove nil (mapcar #'ruri--render-segment segment-list)) ruri-separator))
 
 ;;;###autoload
 (defun ruri-install (segment-list)
   "Update `mode-line-format' using SEGMENT-LIST."
-  (let ((prefixed-segment-list (mapcar 'ruri--get-segment-name (cons 'empty segment-list))))
-    (add-hook 'post-self-insert-hook 'force-mode-line-update)
+  (let ((prefixed-segment-list (mapcar #'ruri--get-segment-name (cons 'empty segment-list))))
+    (add-hook 'post-self-insert-hook #'force-mode-line-update)
     (setq-default mode-line-format `("%e" (:eval (ruri--render ',prefixed-segment-list))))))
 
 (defun ruri--calculate-raise ()
@@ -200,7 +200,7 @@
 
 (define-ruri-segment lsp
   (when (and (featurep 'lsp-mode) lsp--buffer-workspaces)
-    (let ((text (mapconcat 'lsp--workspace-print lsp--buffer-workspaces ruri-lsp-separator)))
+    (let ((text (mapconcat #'lsp--workspace-print lsp--buffer-workspaces ruri-lsp-separator)))
       (propertize text 'face 'ruri-lsp))))
 
 (define-ruri-segment encoding
@@ -234,16 +234,16 @@
 (defun ruri--flycheck-render-report-list (predicate report-list)
   "Extract and render certain kind of reports (e.g. warning) from REPORT-LIST using PREDICATE."
   (let ((face (ruri--flycheck-get-face predicate))
-        (count (apply '+ (mapcar 'cdr (seq-filter predicate report-list)))))
+        (count (apply #'+ (mapcar #'cdr (seq-filter predicate report-list)))))
     (when count
       (propertize (format ruri-flycheck-format count) 'face face))))
 
 (define-ruri-segment flycheck
   (when (featurep 'flycheck)
     (when-let ((report-list (flycheck-count-errors flycheck-current-errors)))
-      (let ((info-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-info report-list))
-            (warning-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-warning report-list))
-            (error-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-error report-list)))
+      (let ((info-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-info report-list))
+            (warning-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-warning report-list))
+            (error-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-error report-list)))
         (string-join (remove nil (list error-text warning-text info-text)) ruri-flycheck-separator)))))
 
 (provide 'ruri)
