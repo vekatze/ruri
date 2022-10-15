@@ -107,26 +107,31 @@
 ;;
 
 (defun ruri--get-segment-name (key)
+  "Construct the name of the segment using KEY."
   (intern (format ruri--segment--format key)))
 
-(defmacro define-ruri-segment (key &rest value)
-  "Define a ruri segment by specifing its name and body."
+(defmacro define-ruri-segment (name &rest body)
+  "Define a ruri segment by specifing its NAME and BODY."
   (declare (indent defun))
-  `(defun ,(ruri--get-segment-name key) () ,@value))
+  `(defun ,(ruri--get-segment-name name) () ,@body))
 
 (defun ruri--render-segment (segment)
+  "Render given SEGMENT."
   (funcall segment))
 
 (defun ruri--render (segment-list)
+  "Render the list of segments SEGMENT-LIST."
   (string-join (remove nil (mapcar 'ruri--render-segment segment-list)) ruri-separator))
 
 ;;;###autoload
 (defun ruri-install (segment-list)
+  "Update `mode-line-format' using SEGMENT-LIST."
   (let ((prefixed-segment-list (mapcar 'ruri--get-segment-name (cons 'empty segment-list))))
     (add-hook 'post-self-insert-hook 'force-mode-line-update)
     (setq-default mode-line-format `("%e" (:eval (ruri--render ',prefixed-segment-list))))))
 
 (defun ruri--calculate-raise ()
+  "Calculate the `raise' value of the mode-line."
   (* (/ (* ruri-mode-line-height-zoom 2.0) 15) -1))
 
 (define-ruri-segment empty
@@ -139,14 +144,17 @@
   "%i")
 
 (defun ruri--get-vc-root-dir ()
+  "Get project root directory."
   (when-let ((root-dir (vc-root-dir)))
     (expand-file-name root-dir)))
 
 (defun ruri--get-vc-currect-git-branch ()
+  "Get the name of current branch."
   (when (vc-root-dir)
     (car (vc-git-branches))))
 
 (defun ruri--summary-project-name ()
+  "Get the propertized name of current project."
   (when-let ((current-project-root (ruri--get-vc-root-dir)))
     (propertize
      (concat
@@ -156,6 +164,7 @@
      'ruri-summary-prefix)))
 
 (defun ruri--summary-git-branch-name ()
+  "Get the propertized name of current branch."
   (when-let ((current-git-branch (ruri--get-vc-currect-git-branch)))
     (propertize
      (concat
@@ -165,11 +174,13 @@
      'ruri-summary-prefix)))
 
 (defun ruri--summary-relative-path-from-project-root ()
+  "Get the project-relative path of current file."
   (when-let ((project-root-dir (ruri--get-vc-root-dir))
              (relative-path (file-name-directory (file-relative-name (buffer-file-name) project-root-dir))))
     (propertize relative-path 'face 'ruri-summary-secondary)))
 
 (defun ruri--summary-primary-name ()
+  "Get the file name or the buffer name."
   (propertize
    (if-let ((file-name (buffer-file-name)))
        (file-name-nondirectory file-name)
@@ -197,36 +208,42 @@
               'face 'ruri-encoding))
 
 (defun ruri--flycheck-get-face (predicate)
+  "Get flycheck face using PREDICATE."
   (cl-case predicate
     (ruri--flycheck-is-info 'ruri-flycheck-info)
     (ruri--flycheck-is-warning 'ruri-flycheck-warning)
     (ruri--flycheck-is-error 'ruri-flycheck-error)))
 
-(defun ruri--flycheck-get-severity (level-count-pair)
-  (flycheck-error-level-severity (car level-count-pair)))
+(defun ruri--flycheck-get-severity (report)
+  "Get severity from REPORT."
+  (flycheck-error-level-severity (car report)))
 
-(defun ruri--flycheck-is-info (level-count-pair)
-  (< (ruri--flycheck-get-severity level-count-pair) 10))
+(defun ruri--flycheck-is-info (report)
+  "Judge if given flycheck REPORT is info."
+  (< (ruri--flycheck-get-severity report) 10))
 
-(defun ruri--flycheck-is-warning (level-count-pair)
-  (let ((level (ruri--flycheck-get-severity level-count-pair)))
+(defun ruri--flycheck-is-warning (report)
+  "Judge if given flycheck REPORT is warning."
+  (let ((level (ruri--flycheck-get-severity report)))
     (and (<= 10 level) (< level 100))))
 
-(defun ruri--flycheck-is-error (level-count-pair)
-  (<= 100 (ruri--flycheck-get-severity level-count-pair)))
+(defun ruri--flycheck-is-error (report)
+  "Judge if given flycheck REPORT is error."
+  (<= 100 (ruri--flycheck-get-severity report)))
 
-(defun ruri--flycheck-render-info (predicate check-info-list)
+(defun ruri--flycheck-render-report-list (predicate report-list)
+  "Extract and render certain kind of reports (e.g. warning) from REPORT-LIST using PREDICATE."
   (let ((face (ruri--flycheck-get-face predicate))
-        (count (apply '+ (mapcar 'cdr (seq-filter predicate check-info-list)))))
+        (count (apply '+ (mapcar 'cdr (seq-filter predicate report-list)))))
     (when count
       (propertize (format ruri-flycheck-format count) 'face face))))
 
 (define-ruri-segment flycheck
   (when (featurep 'flycheck)
-    (when-let ((check-info-list (flycheck-count-errors flycheck-current-errors)))
-      (let ((info-text (ruri--flycheck-render-info 'ruri--flycheck-is-info check-info-list))
-            (warning-text (ruri--flycheck-render-info 'ruri--flycheck-is-warning check-info-list))
-            (error-text (ruri--flycheck-render-info 'ruri--flycheck-is-error check-info-list)))
+    (when-let ((report-list (flycheck-count-errors flycheck-current-errors)))
+      (let ((info-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-info report-list))
+            (warning-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-warning report-list))
+            (error-text (ruri--flycheck-render-report-list 'ruri--flycheck-is-error report-list)))
         (string-join (remove nil (list error-text warning-text info-text)) ruri-flycheck-separator)))))
 
 (provide 'ruri)
