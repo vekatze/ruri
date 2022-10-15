@@ -128,11 +128,11 @@
     (add-hook 'post-self-insert-hook 'force-mode-line-update)
     (setq-default mode-line-format `("%e" (:eval (ruri--render ',prefixed-segment-list))))))
 
-(defun ruri-calculate-raise ()
+(defun ruri--calculate-raise ()
   (* (/ (* ruri-mode-line-height-zoom 2.0) 15) -1))
 
 (define-ruri-segment empty
-  (propertize "\u200b" 'display `((height ,ruri-mode-line-height-zoom) (raise ,(ruri-calculate-raise)))))
+  (propertize "\u200b" 'display `((height ,ruri-mode-line-height-zoom) (raise ,(ruri--calculate-raise)))))
 
 (define-ruri-segment modified
   "%*")
