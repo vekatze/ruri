@@ -6,8 +6,8 @@
 
 Ruri is a thin-layer over modeline.
 
-[[/screenshot/low.png?raw=true]]
+[[/screenshots/low.png?raw=true]]
 
-[[/screenshot/mid.png?raw=true][some description]]
+[[/screenshots/mid.png?raw=true]]
 
-[[/screenshot/high.png?raw=true]]
+[[/screenshots/high.png?raw=true]]
