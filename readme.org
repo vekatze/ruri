@@ -8,7 +8,7 @@ Ruri is a thin layer over mode-line.
 
 [[/screenshots/mini.png?raw=true]]
 
-[[/screenshots/high.png?raw=true]]
+[[/screenshots/full.png?raw=true]]
 
 ** Installation
 TBD
