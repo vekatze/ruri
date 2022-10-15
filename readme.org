@@ -13,7 +13,7 @@ Ruri is a thin-layer over modeline.
 ** Installation
 TBD
 
-Then configure the mode-line like this:
+Then update the ~mode-line-format~ using the pre-defined function ~ruri-install~:
 
 #+begin_src emacs-lisp
 (ruri-install
