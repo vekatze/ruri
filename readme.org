@@ -21,7 +21,7 @@ Then configure the mode-line like this:
 #+end_src
 
 ** Defining Your Own Segments
-New segments can be defined using ~(define-new-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; When this segment is used, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
+New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; When this segment is used, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
 
 Defined segments can be added to the modeline using `ruri-install`.
 
