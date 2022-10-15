@@ -8,8 +8,6 @@ Ruri is a thin-layer over modeline.
 
 [[/screenshots/low.png?raw=true]]
 
-[[/screenshots/mid.png?raw=true]]
-
 [[/screenshots/high.png?raw=true]]
 
 ** Installation
