@@ -204,8 +204,7 @@
       (propertize text 'face 'ruri-lsp))))
 
 (define-ruri-segment encoding
-  (propertize (symbol-name buffer-file-coding-system)
-              'face 'ruri-encoding))
+  (propertize (symbol-name buffer-file-coding-system) 'face 'ruri-encoding))
 
 (defun ruri--flycheck-get-face (predicate)
   "Get flycheck face using PREDICATE."
