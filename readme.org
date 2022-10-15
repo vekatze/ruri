@@ -19,7 +19,28 @@ TBD
 | ruri-mode-line-height-zoom | Specifies the heights of mode-lines             |
 
 ** Defining Your Own Segemnt
-You can define a new segment using ~(define-new-segment name body)~.
+New segments can be defined using ~(define-new-segment NAME BODY)~. Here, ~NAME~ is the name of the newly-defined segment. ~BODY~ specifies the function that is executed every time when mode-line is updated. More specifically, the function ~(lambda () ,@BODY)~ is executed every time when mode-line is updated.
+
+Defined segments can be added to the modeline using `ruri-install`.
+
+Let's see a toy example. The following code defines a new segment ~my-great-segment~ and use it to define a ruri mode-line:
+
+#+begin_src emacs-lisp
+(define-ruri-segment my-great-segment
+  (propertize
+   (current-time-string)
+   'face
+   'error))
+
+(ruri-install
+ '(modified size summary major-mode encoding my-great-segment))
+#+end_src
+
+which results in something like this:
+
+[[/screenshots/example.png?raw=true]]
+
+You can also see that the time in the modeline is updated everytime when the mode-line is updated.
 
 ** See Also
 - [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
