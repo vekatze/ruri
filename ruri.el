@@ -1,6 +1,6 @@
 ;;; ruri.el --- A thin layer over mode-line -*- lexical-binding: t; -*-
 ;; Author: vekatze <vekatze@icloud.com>
-;; Package-Requires: ((emacs "26.1"))
+;; Package-Requires: ((emacs "25.1"))
 ;; SPDX-License-Identifier: ISC
 ;; URL: https://github.com/vekatze/ruri.el
 ;; Version: 1.0.0
