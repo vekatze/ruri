@@ -47,5 +47,5 @@ New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ 
 Defined segments can be added to the mode-line using ~ruri-install~. From the names of the segments passed to this function, Ruri finds corresponding renderer functions (e.g. ~ruri--segment:my-great-segment~), and calls it every time when mode-line needs to be updated. Ruri joins all the return values of these renderer functions, resulting a colorfully decorated mode-line.
 
 ** See Also
-- [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
+- [[https://github.com/vekatze/tsuki-theme][vekatze/tsuki-theme]]
   - the theme in the screenshots
