@@ -4,7 +4,7 @@
 瑠璃の地と人も見つべしわが床は涙の玉と敷きに敷ければ
 #+end_quote
 
-Ruri is a thin-layer over modeline.
+Ruri is a thin layer over mode-line.
 
 [[/screenshots/low.png?raw=true]]
 
@@ -20,10 +20,12 @@ Then update the ~mode-line-format~ using the pre-defined function ~ruri-install~
  '(modified size summary major-mode flycheck lsp encoding))
 #+end_src
 
-** Defining Your Own Segments
-New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; When this segment is used, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
+Specified segments are concatenated using 2 spaces; This can be customized via ~ruri-separator~.
 
-Defined segments can be added to the modeline using ~ruri-install~.
+** Defining Your Own Segments
+New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; The function ~(lambda () ,@BODY)~ is executed every time when this segment is rendered.
+
+Defined segments can be added to the mode-line using ~ruri-install~.
 
 Let's see a toy example. The following code defines a new segment ~my-great-segment~ and uses it:
 
@@ -40,9 +42,7 @@ The code results in something like this:
 
 [[/screenshots/example.png?raw=true]]
 
-You can see that the resulting string of ~my-great-segment~ is concatenated to the resulting strings of the other segments. Those strings are concatenated using 2 spaces in our running example; This can be customized via ~ruri-separator~.
-
-You can also see that the time in the modeline is updated everytime when the mode-line is updated.
+You can easily see that the resulting string of ~my-great-segment~ is added to the mode-line.
 
 ** See Also
 - [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
