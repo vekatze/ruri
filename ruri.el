@@ -1,15 +1,13 @@
-;;; ruri.el --- A thin-layer over modeline -*- lexical-binding: t; -*-
+;;; ruri.el --- A thin layer over mode-line -*- lexical-binding: t; -*-
 
 ;; Author: vekatze <vekatze@icloud.com>
 ;; Created: 2021-12-10
-;; Version: 0.1
+;; Version: 1.0.0
 ;; Package-Requires: ((emacs "26.1"))
 ;; URL: https://github.com/vekatze/ruri.el
-
+;; SPDX-License-Identifier: ISC
 ;;; Commentary:
-
-;; lorem
-
+;; A thin layer over mode-line
 ;;; Code:
 
 (require 'vc-git)
