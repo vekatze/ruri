@@ -23,10 +23,7 @@ Then update the ~mode-line-format~ using the pre-defined function ~ruri-install~
 Specified segments are concatenated using 2 spaces; This can be customized via ~ruri-separator~.
 
 ** Defining Your Own Segments
-New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; The function ~(lambda () ,@BODY)~ is executed every time when this segment is rendered.
-
-Defined segments can be added to the mode-line using ~ruri-install~.
-
+*** Example
 Let's see a toy example. The following code defines a new segment ~my-great-segment~ and uses it:
 
 #+begin_src emacs-lisp
@@ -43,6 +40,11 @@ The code results in something like this:
 [[/screenshots/example.png?raw=true]]
 
 You can easily see that the resulting string of ~my-great-segment~ is added to the mode-line.
+
+*** Details
+New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; The function ~(lambda () ,@BODY)~ is executed every time when this segment is rendered.
+
+Defined segments can be added to the mode-line using ~ruri-install~.
 
 ** See Also
 - [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
