@@ -11,16 +11,16 @@ Ruri is a (yet another) thin layer over mode-line.
 [[/screenshots/full.png?raw=true]]
 
 ** Installation
-TBD
+Please use [[https://github.com/radian-software/straight.el][straight.el]] or something like that.
 
-Then update the ~mode-line-format~ using the pre-defined function ~ruri-install~:
+Then update the ~mode-line-format~ using the function ~ruri-install~:
 
 #+begin_src emacs-lisp
 (ruri-install
  '(modified size summary major-mode flycheck lsp encoding))
 #+end_src
 
-Specified segments are concatenated using 2 spaces; This can be customized via ~ruri-separator~.
+By defaul,t segments are joined using 2 spaces; The separator can be customized via ~ruri-separator~.
 
 ** Defining Your Own Segments
 *** Example
