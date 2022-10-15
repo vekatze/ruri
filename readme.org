@@ -23,9 +23,9 @@ Then configure the mode-line like this:
 ** Defining Your Own Segments
 New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; When this segment is used, the function ~(lambda () ,@BODY)~ is executed every time when a mode-line is updated.
 
-Defined segments can be added to the modeline using `ruri-install`.
+Defined segments can be added to the modeline using ~ruri-install~.
 
-Let's see a toy example. The following code defines a new segment ~my-great-segment~ and use it to define a ruri mode-line:
+Let's see a toy example. The following code defines a new segment ~my-great-segment~ and uses it:
 
 #+begin_src emacs-lisp
 ;; shows current time using the face "error"
