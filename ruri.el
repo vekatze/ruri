@@ -54,7 +54,7 @@
   :group 'ruri
   :type 'integer)
 
-(defvar ruri--segment--format "ruri-segment:%s"
+(defvar ruri--segment--format "ruri--segment:%s"
   "The format string that is used when defining/using an ruri segment.")
 
 (defface ruri-summary-prefix

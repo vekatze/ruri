@@ -42,9 +42,9 @@ The code results in something like this:
 You can easily see that the resulting string of ~my-great-segment~ is added to the mode-line.
 
 *** Details
-New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string; The function ~(lambda () ,@BODY)~ is executed every time when this segment is rendered.
+New segments can be defined using ~(define-ruri-segment NAME BODY)~. The ~NAME~ here is the name of the newly-defined segment, and the ~BODY~ is the body of a function that returns a (possibly propetrized) string. Using this ~BODY~, Ruri defines a nullary function ~(lambda () ,@BODY)~ with some appropriate name (~ruri--segment:my-great-segment~, in the case of the example above).
 
-Defined segments can be added to the mode-line using ~ruri-install~.
+Defined segments can be added to the mode-line using ~ruri-install~. From the names of the segments passed to this function, Ruri finds corresponding renderer functions (e.g. ~ruri--segment:my-great-segment~), and calls it every time when mode-line needs to be updated. Ruri joins all the return values of these renderer functions into one, resulting a colorfully decorated mode-line like a 瑠璃の地 (ruri no chi), or the ground covered by an overflowing amount of ruris (lapis lazulis).
 
 ** See Also
 - [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
