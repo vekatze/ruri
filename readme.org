@@ -11,3 +11,18 @@ Ruri is a thin-layer over modeline.
 [[/screenshots/mid.png?raw=true]]
 
 [[/screenshots/high.png?raw=true]]
+
+** Installation
+TBD
+
+| variable                   | description                                     |
+|----------------------------+-------------------------------------------------|
+| ruri-separator             | The separator that is inserted between segments |
+| ruri-mode-line-height-zoom | Specifies the heights of mode-lines             |
+
+** Defining Your Own Segemnt
+You can define a new segment using ~(define-new-segment name body)~.
+
+** See Also
+- [[https://github.com/vekatze/tsuki-theme.el][vekatze/tsuki-theme.el]]
+  - the theme in the screenshots
