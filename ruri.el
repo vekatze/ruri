@@ -1,6 +1,6 @@
 ;;; ruri.el --- A thin layer over mode-line -*- lexical-binding: t; -*-
 ;; Author: vekatze <vekatze@icloud.com>
-;; Package-Requires: ((emacs "25.1"))
+;; Package-Requires: ((emacs "26.1"))
 ;; SPDX-License-Identifier: ISC
 ;; URL: https://github.com/vekatze/ruri.el
 ;; Version: 1.0.0
@@ -33,13 +33,13 @@
   :group 'ruri
   :type 'string)
 
-(defcustom ruri-flycheck-separator " "
-  "The separator that is inserted between flycheck entities."
+(defcustom ruri-checker-separator " "
+  "The separator that is inserted between flycheck/flymake entities."
   :group 'ruri
   :type 'string)
 
-(defcustom ruri-flycheck-format "•%d"
-  "The format string that is used when displaying a flycheck entity.
+(defcustom ruri-checker-format "•%d"
+  "The format string that is used when displaying a flycheck/flymake entity.
 `%d' stands for the number of errors."
   :group 'ruri
   :type 'string)
@@ -92,19 +92,19 @@
   "Face for keyboard macro information."
   :group 'ruri)
 
-(defface ruri-flycheck-error
-  '((t (:inherit 'flycheck-fringe-error)))
-  "Face for flycheck error feedback in the ruri mode-line."
+(defface ruri-checker-info
+  '((t ()))
+  "Face for flycheck/flymake info feedback in the ruri mode-line."
   :group 'ruri)
 
-(defface ruri-flycheck-warning
-  '((t (:inherit 'flycheck-fringe-warning)))
-  "Face for flycheck warning feedback in the ruri mode-line."
+(defface ruri-checker-warning
+  '((t ()))
+  "Face for flycheck/flymake warning feedback in the ruri mode-line."
   :group 'ruri)
 
-(defface ruri-flycheck-info
-  '((t (:inherit 'flycheck-fringe-info)))
-  "Face for flycheck info feedback in the ruri mode-line."
+(defface ruri-checker-error
+  '((t ()))
+  "Face for flycheck/flymake error feedback in the ruri mode-line."
   :group 'ruri)
 
 ;;
@@ -215,12 +215,16 @@
   (when defining-kbd-macro
     (propertize "recording" 'face 'ruri-keyboard-macro)))
 
+(defun ruri--render-checker-count (count face)
+  "Render checker COUNT using FACE."
+  (propertize (format ruri-checker-format count) 'face face))
+
 (defun ruri--flycheck-get-face (predicate)
   "Get flycheck face using PREDICATE."
   (cl-case predicate
-    (ruri--flycheck-is-info 'ruri-flycheck-info)
-    (ruri--flycheck-is-warning 'ruri-flycheck-warning)
-    (ruri--flycheck-is-error 'ruri-flycheck-error)))
+    (ruri--flycheck-is-info 'ruri-checker-info)
+    (ruri--flycheck-is-warning 'ruri-checker-warning)
+    (ruri--flycheck-is-error 'ruri-checker-error)))
 
 (defun ruri--flycheck-get-severity (report)
   "Get severity from REPORT."
@@ -244,7 +248,7 @@
   (let ((face (ruri--flycheck-get-face predicate))
         (count (apply #'+ (mapcar #'cdr (seq-filter predicate report-list)))))
     (when count
-      (propertize (format ruri-flycheck-format count) 'face face))))
+      (ruri--render-checker-count count face))))
 
 (define-ruri-segment flycheck
   (when (featurep 'flycheck)
@@ -252,7 +256,45 @@
       (let ((info-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-info report-list))
             (warning-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-warning report-list))
             (error-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-error report-list)))
-        (string-join (remove nil (list error-text warning-text info-text)) ruri-flycheck-separator)))))
+        (string-join (remove nil (list error-text warning-text info-text)) ruri-checker-separator)))))
+
+(defun ruri--flymake-get-face (predicate)
+  "Get flymake face using PREDICATE."
+  (cl-case predicate
+    (ruri--flymake-is-info 'ruri-checker-info)
+    (ruri--flymake-is-warning 'ruri-checker-warning)
+    (ruri--flymake-is-error 'ruri-checker-error)))
+
+(defun ruri--get-flymake-category (report)
+  "Get flymake category of a REPORT."
+  (get (flymake-diagnostic-type report) 'flymake-category))
+
+(defun ruri--flymake-is-note (report)
+  "Check if a REPORT is a flymake note."
+  (eq (ruri--get-flymake-category report) 'flymake-note))
+
+(defun ruri--flymake-is-warning (report)
+  "Check if a REPORT is a flymake warning."
+  (eq (ruri--get-flymake-category report) 'flymake-warning))
+
+(defun ruri--flymake-is-error (report)
+  "Check if a REPORT is a flymake error."
+  (eq (ruri--get-flymake-category report) 'flymake-error))
+
+(defun ruri--flymake-render-report-list (predicate report-list)
+  "Extract and render certain kind of reports (e.g. warning) from REPORT-LIST using PREDICATE."
+  (let ((face (ruri--flymake-get-face predicate))
+        (count (length (seq-filter predicate report-list))))
+    (when (> count 0)
+      (ruri--render-checker-count count face))))
+
+(define-ruri-segment flymake
+  (when (featurep 'flymake)
+    (when-let ((report-list (flymake-diagnostics)))
+      (let ((note-text (ruri--flymake-render-report-list #'ruri--flymake-is-note report-list))
+            (warning-text (ruri--flymake-render-report-list #'ruri--flymake-is-warning report-list))
+            (error-text (ruri--flymake-render-report-list #'ruri--flymake-is-error report-list)))
+        (string-join (remove nil (list error-text warning-text note-text)) ruri-checker-separator)))))
 
 (provide 'ruri)
 
