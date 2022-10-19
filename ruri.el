@@ -196,7 +196,8 @@
 (defun ruri--summary-relative-path-from-project-root ()
   "Get the project-relative path of current file."
   (when-let ((project-root-dir (ruri--get-vc-root-dir))
-             (relative-path (file-name-directory (file-relative-name (buffer-file-name) project-root-dir))))
+             (file-name (buffer-file-name))
+             (relative-path (file-name-directory (file-relative-name file-name project-root-dir))))
     (propertize relative-path 'face 'ruri-summary-secondary)))
 
 (defun ruri--summary-primary-name ()
