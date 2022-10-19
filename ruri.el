@@ -285,8 +285,7 @@
   "Extract and render certain kind of reports (e.g. warning) from REPORT-LIST using PREDICATE."
   (let ((face (ruri--flymake-get-face predicate))
         (count (length (seq-filter predicate report-list))))
-    (when (> count 0)
-      (ruri--render-checker-count count face))))
+    (ruri--render-checker-count count face)))
 
 (define-ruri-segment flymake
   (when (featurep 'flymake)
