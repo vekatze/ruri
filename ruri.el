@@ -87,6 +87,11 @@
   "Face for the buffer encoding string in the ruri mode-line."
   :group 'ruri)
 
+(defface ruri-tramp-method
+  '((t (:inherit ruri-summary-prefix)))
+  "Face for the TRAMP method name in the ruri mode-line."
+  :group 'ruri)
+
 (defface ruri-keyboard-macro
   '((t (:inherit font-lock-builtin-face)))
   "Face for keyboard macro information."
@@ -153,6 +158,16 @@
   (when-let ((root-dir (vc-root-dir)))
     (expand-file-name root-dir)))
 
+(defun ruri--tramp-method ()
+  "Get the method name of TRAMP."
+  (when-let ((method-name (file-remote-p default-directory 'method)))
+    (propertize
+     (concat
+      method-name
+      ruri-summary-separator)
+     'face
+     'ruri-tramp-method)))
+
 (defun ruri--get-vc-currect-git-branch ()
   "Get the name of current branch."
   (when (vc-root-dir)
@@ -195,6 +210,7 @@
 
 (define-ruri-segment summary
   (concat
+   (ruri--tramp-method)
    (ruri--summary-project-name)
    (ruri--summary-git-branch-name)
    (ruri--summary-relative-path-from-project-root)
