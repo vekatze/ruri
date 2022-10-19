@@ -261,7 +261,7 @@
 (defun ruri--flymake-get-face (predicate)
   "Get flymake face using PREDICATE."
   (cl-case predicate
-    (ruri--flymake-is-info 'ruri-checker-info)
+    (ruri--flymake-is-note 'ruri-checker-info)
     (ruri--flymake-is-warning 'ruri-checker-warning)
     (ruri--flymake-is-error 'ruri-checker-error)))
 
