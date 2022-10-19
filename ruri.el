@@ -87,6 +87,11 @@
   "Face for the buffer encoding string in the ruri mode-line."
   :group 'ruri)
 
+(defface ruri-keyboard-macro
+  '((t (:inherit font-lock-builtin-face)))
+  "Face for keyboard macro information."
+  :group 'ruri)
+
 (defface ruri-flycheck-error
   '((t (:inherit 'flycheck-fringe-error)))
   "Face for flycheck error feedback in the ruri mode-line."
@@ -205,6 +210,10 @@
 
 (define-ruri-segment encoding
   (propertize (symbol-name buffer-file-coding-system) 'face 'ruri-encoding))
+
+(define-ruri-segment keyboard-macro ()
+  (when defining-kbd-macro
+    (propertize "recording" 'face 'ruri-keyboard-macro)))
 
 (defun ruri--flycheck-get-face (predicate)
   "Get flycheck face using PREDICATE."
