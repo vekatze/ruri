@@ -112,6 +112,11 @@
   "Face for flycheck/flymake error feedback in the ruri mode-line."
   :group 'ruri)
 
+(defface ruri-eglot
+  '((t (:inherit font-lock-builtin-face)))
+  "Face for eglot info in the ruri mode-line."
+  :group 'ruri)
+
 ;;
 ;; main
 ;;
@@ -132,13 +137,6 @@
 (defun ruri--render (segment-list)
   "Render the list of segments SEGMENT-LIST."
   (string-join (remove nil (mapcar #'ruri--render-segment segment-list)) ruri-separator))
-
-;;;###autoload
-(defun ruri-install (segment-list)
-  "Update `mode-line-format' using SEGMENT-LIST."
-  (let ((prefixed-segment-list (mapcar #'ruri--get-segment-name (cons 'empty segment-list))))
-    (add-hook 'post-self-insert-hook #'force-mode-line-update)
-    (setq-default mode-line-format `("%e" (:eval (ruri--render ',prefixed-segment-list))))))
 
 (defun ruri--calculate-raise ()
   "Calculate the `raise' value of the mode-line."
@@ -311,6 +309,42 @@
             (warning-text (ruri--flymake-render-report-list #'ruri--flymake-is-warning report-list))
             (error-text (ruri--flymake-render-report-list #'ruri--flymake-is-error report-list)))
         (string-join (remove nil (list error-text warning-text note-text)) ruri-checker-separator)))))
+
+(defvar ruri--eglot-connecting nil)
+
+(defun ruri--eglot-set-connecting-true (&rest _)
+  (setq ruri--eglot-connecting t))
+
+(defun ruri--eglot-set-connecting-false (&rest _)
+  (setq ruri--eglot-connecting nil))
+
+(define-ruri-segment eglot
+  (when (featurep 'eglot)
+    (pcase-let* ((server (eglot-current-server))
+                 (nick (and server (eglot-project-nickname server))))
+      (when (or nick ruri--eglot-connecting)
+        (propertize
+         (if ruri--eglot-connecting
+             (when ruri--eglot-connecting
+               "activating lsp...")
+           (concat "lsp:" nick))
+         'face
+         'ruri-eglot)))))
+
+;;;###autoload
+(defun ruri-install (segment-list)
+  "Update `mode-line-format' using SEGMENT-LIST."
+  (let ((prefixed-segment-list (mapcar #'ruri--get-segment-name (cons 'empty segment-list))))
+    (add-hook 'post-self-insert-hook #'force-mode-line-update)
+    (add-hook 'eglot-server-initialized-hook 'ruri--eglot-set-connecting-true)
+    (add-hook 'eglot-connect-hook 'ruri--eglot-set-connecting-false)
+    (setq-default mode-line-format `("%e" (:eval (ruri--render ',prefixed-segment-list))))))
+
+;;;###autoload
+(defun ruri-cleanup ()
+  (remove-hook 'post-self-insert-hook #'force-mode-line-update)
+  (remove-hook 'eglot-server-initialized-hook #'ruri--eglot-set-connecting-true)
+  (remove-hook 'eglot-connect-hook #'ruri--eglot-set-connecting-false))
 
 (provide 'ruri)
 
