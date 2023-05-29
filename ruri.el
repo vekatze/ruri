@@ -267,11 +267,12 @@
 
 (define-ruri-segment flycheck
   (when (featurep 'flycheck)
-    (when-let ((report-list (flycheck-count-errors flycheck-current-errors)))
-      (let ((info-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-info report-list))
-            (warning-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-warning report-list))
-            (error-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-error report-list)))
-        (string-join (remove nil (list error-text warning-text info-text)) ruri-checker-separator)))))
+    (when (not (and (featurep 'lsp-mode) lsp--buffer-workspaces))
+      (when-let ((report-list (flycheck-count-errors flycheck-current-errors)))
+        (let ((info-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-info report-list))
+              (warning-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-warning report-list))
+              (error-text (ruri--flycheck-render-report-list #'ruri--flycheck-is-error report-list)))
+          (string-join (remove nil (list error-text warning-text info-text)) ruri-checker-separator))))))
 
 (defun ruri--flymake-get-face (predicate)
   "Get flymake face using PREDICATE."
@@ -317,6 +318,13 @@
 
 (defun ruri--eglot-set-connecting-false (&rest _)
   (setq ruri--eglot-connecting nil))
+
+(define-ruri-segment lsp-diagnostics
+  (when (featurep 'lsp)
+    (let ((cand (lsp-modeline--diagnostics-update-modeline)))
+      (if (not (eq cand ""))
+          (string-trim-right cand)
+        nil))))
 
 (define-ruri-segment eglot
   (when (featurep 'eglot)
